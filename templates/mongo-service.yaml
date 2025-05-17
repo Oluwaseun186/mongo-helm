@@ -1,11 +1,12 @@
+# mongo-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongo
+  name: mongo  # <-- this name must match what mongo-express is trying to reach
 spec:
-  type: ClusterIP
   selector:
-    app: mongo-dep
+    app: mongo  # label that matches your MongoDB deployment
   ports:
-  - port: 27017
-    targetPort: 27017
+    - port: 27017
+      targetPort: 27017
+  type: ClusterIP

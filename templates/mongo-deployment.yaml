@@ -1,22 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongo-dep
+  name: mongo
 spec:
   selector:
     matchLabels:
-      app: mongo-dep
+      app: mongo
   template:
     metadata:
       labels:
-        app: mongo-dep
+        app: mongo
     spec:
       containers:
       - name: mongo
         image: mongo
-        volumeMounts: 
-          - name: mongopv
-            mountPath: /data/whatever
+        ports:
+        - containerPort: 27017
         env:
           - name: MONGO_INITDB_ROOT_USERNAME
             valueFrom: 
@@ -28,11 +27,18 @@ spec:
               secretKeyRef: 
                 name: mongosecret
                 key: MONGO_INITDB_ROOT_PASSWORD
+     
+        volumeMounts: 
+          - name: mongopv
+            mountPath: /data/db
+          - name: mongo-ssl-volume
+            mountPath: /etc/ssl/mongo
+            readOnly: true
 
-        ports:
-        - containerPort: 27017
-
-      volumes: 
-      - name: mongopv
-        persistentVolumeClaim: 
-          claimName: mypvc2
+      volumes:
+        - name: mongo-ssl-volume
+          secret:
+            secretName: mongo-ssl
+        - name: mongopv
+          persistentVolumeClaim: 
+            claimName: mypvc2
