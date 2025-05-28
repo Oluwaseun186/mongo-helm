@@ -2,7 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mongoexpress
+  namespace: ingress-nginx
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: mongoexpress
@@ -14,7 +16,6 @@ spec:
       containers:
         - name: mongoexpress
           image: mongo-express
-          restart: always
           ports:
             - containerPort: 8081
           env:
@@ -39,15 +40,3 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "500m"
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 8081
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 8081
-            initialDelaySeconds: 15
-            periodSeconds: 20

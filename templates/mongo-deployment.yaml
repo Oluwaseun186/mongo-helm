@@ -2,7 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mongo
+  namespace: ingress-nginx
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: mongo
@@ -17,28 +19,19 @@ spec:
         ports:
         - containerPort: 27017
         env:
-          - name: MONGO_INITDB_ROOT_USERNAME
-            valueFrom: 
-              secretKeyRef: 
-                name: mongosecret
-                key: MONGO_INITDB_ROOT_USERNAME
-          - name: MONGO_INITDB_ROOT_PASSWORD
-            valueFrom: 
-              secretKeyRef: 
-                name: mongosecret
-                key: MONGO_INITDB_ROOT_PASSWORD
-     
-        volumeMounts: 
-          - name: mongopv
-            mountPath: /data/db
-          - name: mongo-ssl-volume
-            mountPath: /etc/ssl/mongo
-            readOnly: true
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: MONGO_INITDB_ROOT_USERNAME
+              name: mongosecret
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MONGO_INITDB_ROOT_PASSWORD
+              name: mongosecret
 
-      volumes:
-        - name: mongo-ssl-volume
-          secret:
-            secretName: mongo-ssl
-        - name: mongopv
-          persistentVolumeClaim: 
-            claimName: mypvc2
+
+        volumes: 
+          - name: mongopv
+            persistentVolumeClaim: 
+              claimName: mypvc2

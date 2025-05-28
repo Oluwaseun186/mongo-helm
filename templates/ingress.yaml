@@ -1,23 +1,27 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: mongoexpress-ingress
-  namespace: default
-  annotations:
-    kubernetes.io/ingress.class: alb
-    alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80,"HTTPS":443}]'
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:390402544911:certificate/YOUR_CERT_ID
-    alb.ingress.kubernetes.io/ssl-redirect: '443'
+  name: mongoexpressingress
+  labels:
+    name: mongoexpressingress
+  namespace: ingress-nginx
+  annotations: 
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  tls: 
+    - hosts: 
+      - codifydaily.com
+      secretName: codifydaily.com-tls
+  ingressClassName: nginx
   rules:
-    - host: www.nginx.com
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: mongoexpress
-                port:
-                  number: 8081
+        - host: codifydaily.com
+          http: 
+            paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: mongo-express-service
+                  port: 
+                    number: 80

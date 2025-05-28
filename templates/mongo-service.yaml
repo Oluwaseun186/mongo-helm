@@ -2,7 +2,8 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongo  # <-- this name must match what mongo-express is trying to reach
+  name: mongo  
+  namespace: ingress-nginx
 spec:
   selector:
     app: mongo  # label that matches your MongoDB deployment
